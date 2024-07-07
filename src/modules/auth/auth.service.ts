@@ -21,19 +21,25 @@ export class AuthService {
     if (user) {
       if (!this.checkPassword(password, user.hashPassword))
         throw new UnauthorizedException(AuthMessage.pPasswordInCurrent);
-
-      
     } else {
       user = this.userRepository.create({ username, hashPassword: password });
       await this.userRepository.save(user);
-  
     }
     return {
-        message: PublicMessage.LoggedIn,
-        token: this.tokenService.createJwtToken({ userId: user.id }),
-      };
+      message: PublicMessage.LoggedIn,
+      token: this.tokenService.createJwtToken({ userId: user.id }),
+    };
   }
-
+  async validateJwtToken(token: string) {
+    const { userId } = this.tokenService.verifyAccessToken(token);
+    
+    let user = await this.userRepository.findOne({
+      where: { id: userId },
+      select: ['id', 'username', 'avatar', 'created_at', 'updated_at'],
+    });
+    if (!user) throw new UnauthorizedException(AuthMessage.LoginAgain);
+    return user
+  }
   async checkPassword(pass: string, hashPass: string) {
     return bcrypt.compareSync(pass, hashPass);
   }
