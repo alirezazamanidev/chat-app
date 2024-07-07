@@ -4,12 +4,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from '../user/entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { AuthMessage } from 'src/common/enums/message.enum';
+import { AuthMessage, PublicMessage } from 'src/common/enums/message.enum';
+import { TokenService } from './tokens.service';
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
+    private tokenService: TokenService,
   ) {}
 
   async login(LoginDto: LoginDto) {
@@ -19,14 +21,17 @@ export class AuthService {
     if (user) {
       if (!this.checkPassword(password, user.hashPassword))
         throw new UnauthorizedException(AuthMessage.pPasswordInCurrent);
-    // create token
-    return 'user login'
-    }else {
-        user=this.userRepository.create({username,hashPassword:password})
-        await this.userRepository.save(user)
-        // create token
-        return 'user register'
+
+      
+    } else {
+      user = this.userRepository.create({ username, hashPassword: password });
+      await this.userRepository.save(user);
+  
     }
+    return {
+        message: PublicMessage.LoggedIn,
+        token: this.tokenService.createJwtToken({ userId: user.id }),
+      };
   }
 
   async checkPassword(pass: string, hashPass: string) {

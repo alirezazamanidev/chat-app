@@ -11,5 +11,7 @@ declare namespace NodeJS {
         DB_USERNAME: string;
         DB_PORT: number;
         DB_NAME: string;
+        // Secret key
+        JWT_TOKEN_SECRET:string
     }
 }
