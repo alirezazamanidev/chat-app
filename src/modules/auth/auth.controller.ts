@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { ContentType, SwaggerTags } from 'src/common/enums/swagger.enum';
@@ -10,7 +10,7 @@ import { Auth } from 'src/common/decorators/auth.decorator';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
-  
+
   @HttpCode(HttpStatus.OK)
   @Post('login')
   @ApiConsumes(ContentType.UrlEncoded,ContentType.Json)

@@ -40,7 +40,7 @@ export class AuthService {
     if (!user) throw new UnauthorizedException(AuthMessage.LoginAgain);
     return user
   }
-  async checkPassword(pass: string, hashPass: string) {
+  private async checkPassword(pass: string, hashPass: string) {
     return bcrypt.compareSync(pass, hashPass);
   }
 }
