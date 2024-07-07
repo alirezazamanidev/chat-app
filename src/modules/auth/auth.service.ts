@@ -16,7 +16,7 @@ export class AuthService {
 
   async login(LoginDto: LoginDto) {
     let { username, password } = LoginDto;
-
+    // throw new Error('somthing error!')
     let user = await this.userRepository.findOneBy({ username });
     if (user) {
       if (!this.checkPassword(password, user.hashPassword))
